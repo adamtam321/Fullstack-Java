@@ -1,0 +1,37 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+fortam.md
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+
+# Backend specific
+backend/target/
+backend/bin/
+backend/*.jar
+backend/cookie.txt
+backend/cookies.txt
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.factorypath
+backend/.springBeans
+backend/.sts4-cache
+
+# Frontend specific
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env.local
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/pnpm-debug.log*
+
