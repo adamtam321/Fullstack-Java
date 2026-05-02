@@ -12,6 +12,7 @@ import UserPage from './pages/user.page.tsx';
 import BlogPage from './pages/blog.page.tsx';
 import LoginPage from './pages/login.page.tsx';
 import RegisterPage from './pages/register.page.tsx';
+import TodoPage from './pages/todo.page.tsx';
 import { AuthProvider } from './context/auth.context.tsx';
 
 const router = createBrowserRouter([
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "blogs",
         element: <BlogPage />,
+      },
+      {
+        path: "todos",
+        element: <TodoPage />,
       },
     ]
   },

@@ -34,9 +34,8 @@ public class TodoService {
 		return createdTodo;
 	}
 
-	public List<Todo> handleGetTodo() {
-		return this.todoRepository.findAll();
-
+	public List<Todo> handleGetTodo(String username) {
+		return this.todoRepository.findAllByUsername(username);
 	}
 
 	public void handleUpdateTodo(Long id, Todo inputTodo) {
@@ -45,6 +44,10 @@ public class TodoService {
 		if (todoOptional.isPresent()) {
 			Todo currentTodo = todoOptional.get();
 
+			currentTodo.setTitle(inputTodo.getTitle());
+			currentTodo.setDescription(inputTodo.getDescription());
+			currentTodo.setPriority(inputTodo.getPriority());
+			currentTodo.setDueDate(inputTodo.getDueDate());
 			currentTodo.setCompleted(inputTodo.isCompleted());
 			currentTodo.setUsername(inputTodo.getUsername());
 

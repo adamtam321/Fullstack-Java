@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserSwitchOutlined, HomeOutlined, LoginOutlined, UserAddOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { UserSwitchOutlined, HomeOutlined, LoginOutlined, UserAddOutlined, LogoutOutlined, UserOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { Link, useNavigate } from "react-router";
@@ -31,6 +31,13 @@ const AppHeader = () => {
             key: 'home',
             icon: <HomeOutlined />,
         },
+        ...(user ? [
+            {
+                label: <Link to={"/todos"}>タスク</Link>,
+                key: 'todo',
+                icon: <CheckSquareOutlined />
+            }
+        ] : []),
         ...(user?.role === 'ADMIN' ? [
             {
                 label: <Link to={"/users"}>ユーザー</Link>,
@@ -69,11 +76,13 @@ const AppHeader = () => {
     ];
 
     return (
-        <Menu
-            onClick={onClick}
-            selectedKeys={[current]}
-            mode="horizontal" items={items}
-        />
+        <div style={{ position: 'sticky', top: 0, zIndex: 100, width: '100%', backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            <Menu
+                onClick={onClick}
+                selectedKeys={[current]}
+                mode="horizontal" items={items}
+            />
+        </div>
     )
 
 }

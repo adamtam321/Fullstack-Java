@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { Button, message, Popconfirm, Table } from "antd";
+import { Button, message, Popconfirm, Table, App } from "antd";
 import { useEffect, useState } from "react";
 import CreateUserModal from "../components/modal/create.user.modal";
 import { deleteUserApi, getUsersApi } from "../services/api";
@@ -15,6 +15,14 @@ export interface IUser {
 }
 
 const UserPage = () => {
+    return (
+        <App>
+            <UserContent />
+        </App>
+    )
+}
+
+const UserContent = () => {
     const { user } = useAuth();
     const [users, setUsers] = useState<IUser[]>([]);
     const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
@@ -142,8 +150,6 @@ const UserPage = () => {
             />
         </div>
     )
-
-
 }
 
 export default UserPage;

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import vn.tamproject.todo.entity.ApiResponse;
 import vn.tamproject.todo.entity.Todo;
 import vn.tamproject.todo.service.TodoService;
 
@@ -25,39 +26,45 @@ public class TodoController {
 	}
 
 	@GetMapping("/todos/{id}")
-	public ResponseEntity<Todo> getTodoById(@PathVariable Long id) {
+	public ResponseEntity<ApiResponse<Todo>> getTodoById(@PathVariable Long id) {
 		Todo todoData = this.todoService.getTodoById(id);
-		return ResponseEntity.ok().body(todoData);
+		if (todoData != null) {
+			return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK, "Success", todoData, null));
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse<>(HttpStatus.NOT_FOUND, "Todo not found", null, "NOT_FOUND"));
 	}
 
 	@GetMapping("/todos")
-	public ResponseEntity<List<Todo>> getTodos() {
-		List<Todo> listTodo = this.todoService.handleGetTodo();
-		return ResponseEntity.ok().body(listTodo);
+	public ResponseEntity<ApiResponse<List<Todo>>> getTodos() {
+		String currentUsername = org.springframework.security.core.context.SecurityContextHolder.getContext()
+				.getAuthentication().getName();
+		List<Todo> listTodo = this.todoService.handleGetTodo(currentUsername);
+		return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK, "Success", listTodo, null));
 	}
 
 	@PostMapping("/todos")
-	public ResponseEntity<Todo> createTodo(@RequestBody Todo input) {
+	public ResponseEntity<ApiResponse<Todo>> createTodo(@RequestBody Todo input) {
 		Todo newTodo = this.todoService.handleCreateTodo(input);
-		return ResponseEntity.status(HttpStatus.CREATED).body(newTodo);
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(new ApiResponse<>(HttpStatus.CREATED, "Created", newTodo, null));
 	}
 
 	@PutMapping("/todos/{id}")
-	public ResponseEntity<String> updateTodo(@PathVariable Long id, @RequestBody Todo input) {
+	public ResponseEntity<ApiResponse<Todo>> updateTodo(@PathVariable Long id, @RequestBody Todo input) {
 		this.todoService.handleUpdateTodo(id, input);
-		return ResponseEntity.ok().body("update succeed");
-		// this.todoService.handleUpdateTodo();
+		return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK, "Updated", null, null));
 	}
 
 	@DeleteMapping("/todos/{id}")
-	public ResponseEntity<String> deleteTodo(@PathVariable Long id) {
+	public ResponseEntity<ApiResponse<Void>> deleteTodo(@PathVariable Long id) {
 		this.todoService.handleDeleteTodo(id);
-		return ResponseEntity.ok().body("delete succeed with id: " + id);
+		return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK, "Deleted", null, null));
 	}
 
 	@GetMapping("/hoidanit")
-	public Todo hoidanit() {
-		Todo test = new Todo("hoidanit", false);
-		return test;
+	public ApiResponse<Todo> hoidanit() {
+		Todo test = new Todo("Test Title", "Test Description", "MEDIUM", "2026-05-01", "hoidanit", false);
+		return new ApiResponse<>(HttpStatus.OK, "Success", test, null);
 	}
 }

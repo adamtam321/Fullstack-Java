@@ -14,21 +14,25 @@ public class Todo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	String username;
+	private String title;
+	private String description;
+	private String priority; // HIGH, MEDIUM, LOW
+	private String dueDate;  // ISO format String for simplicity
+	private String username;
 
-	boolean isCompleted;
+	@jakarta.persistence.Column(name = "is_completed")
+	private boolean completed;
 
 	public Todo() {
 	}
 
-	public Todo(String username, boolean isCompleted) {
+	public Todo(String title, String description, String priority, String dueDate, String username, boolean completed) {
+		this.title = title;
+		this.description = description;
+		this.priority = priority;
+		this.dueDate = dueDate;
 		this.username = username;
-		this.isCompleted = isCompleted;
-	}
-
-	@Override
-	public String toString() {
-		return "Todo [id=" + id + ", username=" + username + ", isCompleted=" + isCompleted + "]";
+		this.completed = completed;
 	}
 
 	public Long getId() {
@@ -37,6 +41,38 @@ public class Todo {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getPriority() {
+		return priority;
+	}
+
+	public void setPriority(String priority) {
+		this.priority = priority;
+	}
+
+	public String getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(String dueDate) {
+		this.dueDate = dueDate;
 	}
 
 	public String getUsername() {
@@ -48,11 +84,15 @@ public class Todo {
 	}
 
 	public boolean isCompleted() {
-		return isCompleted;
+		return completed;
 	}
 
-	public void setCompleted(boolean isCompleted) {
-		this.isCompleted = isCompleted;
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
 	}
 
+	@Override
+	public String toString() {
+		return "Todo [id=" + id + ", title=" + title + ", priority=" + priority + ", username=" + username + ", completed=" + completed + "]";
+	}
 }
