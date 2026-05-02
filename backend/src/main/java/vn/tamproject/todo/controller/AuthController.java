@@ -7,20 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import vn.tamproject.todo.entity.ApiResponse;
 import vn.tamproject.todo.entity.User;
 import vn.tamproject.todo.repository.UserRepository;
-
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
+import vn.tamproject.todo.security.JwtUtil;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,29 +23,29 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+    private final JwtUtil jwtUtil;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<User>> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request,
-            HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
-
             Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                // Bảo mật: Không trả về password băm cho Frontend
-                user.setPassword(null);
-                var result = new ApiResponse<>(HttpStatus.OK, "ログイン成功", user, null);
+                user.setPassword(null); // Security: Don't return hash
+                
+                String token = jwtUtil.generateToken(user.getEmail());
+                
+                LoginResponse loginResponse = new LoginResponse(token, user);
+                var result = new ApiResponse<>(HttpStatus.OK, "Login successful", loginResponse, null);
                 return ResponseEntity.ok(result);
             }
         } catch (Exception e) {
@@ -64,20 +59,24 @@ public class AuthController {
         private String email;
         private String password;
 
-        public String getEmail() {
-            return email;
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+    }
+
+    public static class LoginResponse {
+        private String token;
+        private User user;
+
+        public LoginResponse(String token, User user) {
+            this.token = token;
+            this.user = user;
         }
 
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
+        public User getUser() { return user; }
+        public void setUser(User user) { this.user = user; }
     }
 }

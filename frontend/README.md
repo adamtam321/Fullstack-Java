@@ -1,60 +1,27 @@
-# フロントエンド - React モダンタスクダッシュボード
+# フロントエンド - React JWT Dashboard
 
-本ディレクトリは、ユーザーフレンドリーでレスポンシブなタスク管理ダッシュボードを提供する React アプリケーションです。
+本ディレクトリは、JWT 認証を利用してバックエンドと通信する React アプリケーションです。
 
 ---
 
 ## 🏗️ 技術スタック
-- **Core**: React 19 (Hooks, Context API)
-- **Build Tool**: Vite (高速なビルドと HMR)
-- **Language**: TypeScript (型安全な設計)
-- **UI Library**: Ant Design (antd)
-- **State Management**: React Context による認証情報の管理
-- **Date Handling**: Day.js
-- **HTTP Client**: Axios
+- **Core**: React 19 / TypeScript
+- **State**: Context API (Auth Context)
+- **Networking**: Axios (JWT Interceptor 搭載)
+- **UI**: Ant Design
 
 ---
 
-## 🌟 主要な機能と UX 設計
-
-### 1. インタラクティブ・ダッシュボード
-- **データの視覚化**: 統計カードとプログレスサークルにより、全体の進捗をひと目で把握可能。
-- **動的フィルタリング**: 統計カードをクリックすることで、サイドパネルに即座に該当タスクを一覧表示する高度なインタラクションを実装。
-
-### 2. インテリジェントなタスク管理
-- **7日間スケジュール**: 期限が近いタスクを自動抽出し、優先度と期日でソートして表示。
-- **レスポンシブ・テーブル**: 検索、フィルタリング、ソート機能を備えた高度なタスク一覧画面。
-
-### 3. ルーティングと権限ガード
-- **React Router**: SPA 構成によるスムーズなページ遷移。
-- **認可ガード**: ロール（ADMIN/USER）に基づいたページアクセス制限（例：Admin 専用のユーザー管理画面）。
+## 🛠️ 認証の実装詳細
+- **Interceptor**: `axios.interceptors.request` を使用し、`localStorage` からトークンを読み取って自動的に `Authorization` ヘッダーへセットします。
+- **Storage**: ログイン成功時に返却されたトークンとユーザー情報を `localStorage` に永続化します。
+- **Auth Guard**: 認証情報の有無により、ログインページへのリダイレクトや ADMIN 専用画面の表示制限を行います。
 
 ---
 
 ## 🚀 ローカルでの開発手順
-
-### 前提条件
-- Node.js 20 以上
-- npm
-
-### 起動方法
-1. 依存関係のインストール:
-   ```bash
-   npm install
-   ```
-2. 環境変数の設定:
-   `.env` ファイルを作成し、以下を記述（デフォルト）:
-   ```env
-   VITE_BACKEND_URL=http://localhost:8080
-   ```
-3. 開発サーバーの起動:
-   ```bash
-   npm run dev
-   ```
-
----
-
-## 🐳 Docker と本番配信
-本番環境では、Docker を使用して **Nginx** サーバー上で静的ファイルを配信します。
-- **SPA 対応**: Nginx の設定により、React Router のブラウザルーティング（Deep Link）による 404 エラーを回避（`try_files` 設定）。
-- **マルチステージビルド**: Node.js でのビルド後、実行環境には Nginx のみを含むことで、イメージサイズを最小化しセキュリティを向上。
+```bash
+npm install
+npm run dev
+```
+`.env` ファイルの `VITE_BACKEND_URL` が正しく設定されていることを確認してください。

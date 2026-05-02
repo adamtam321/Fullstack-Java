@@ -3,7 +3,7 @@ import { IUser } from "../pages/user.page";
 
 interface AuthContextType {
     user: IUser | null;
-    login: (userData: IUser) => void;
+    login: (userData: IUser, token: string) => void;
     logout: () => void;
 }
 
@@ -15,14 +15,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const login = (userData: IUser) => {
+    const login = (userData: IUser, token: string) => {
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", token);
     };
 
     const logout = () => {
         setUser(null);
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
     };
 
     return (

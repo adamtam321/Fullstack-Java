@@ -1,51 +1,58 @@
 import axios from "axios";
 
-// Enable sending cookies across domains for session-based auth
-axios.defaults.withCredentials = true;
+// Create an axios instance
+const instance = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+});
+
+// Add a request interceptor to include the JWT token
+instance.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 const getUsersApi = () => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/users`;
-    return axios.get(url);
+    return instance.get("/users");
 }
 
 const createUserApi = (name: string, email: string, password?: string, role?: string) => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/users`;
-    return axios.post(url, { name, email, password, role })
+    return instance.post("/users", { name, email, password, role })
 }
 
 const updateUserApi = (id: number, name: string, email: string, password?: string, role?: string) => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/users/${id}`;
-    return axios.put(url, { id, name, email, password, role })
+    return instance.put(`/users/${id}`, { id, name, email, password, role })
 }
 
 const deleteUserApi = (id: number) => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/users/${id}`;
-    return axios.delete(url)
+    return instance.delete(`/users/${id}`)
 }
 
 const loginApi = (email: string, password?: string) => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
-    return axios.post(url, { email, password })
+    return instance.post("/auth/login", { email, password })
 }
 
 const getTodosApi = () => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/todos`;
-    return axios.get(url);
+    return instance.get("/todos");
 }
 
 const createTodoApi = (title: string, description: string, priority: string, dueDate: string, username: string) => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/todos`;
-    return axios.post(url, { title, description, priority, dueDate, username, completed: false })
+    return instance.post("/todos", { title, description, priority, dueDate, username, completed: false })
 }
 
 const updateTodoApi = (id: number, title: string, description: string, priority: string, dueDate: string, username: string, completed: boolean) => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/todos/${id}`;
-    return axios.put(url, { title, description, priority, dueDate, username, completed })
+    return instance.put(`/todos/${id}`, { title, description, priority, dueDate, username, completed })
 }
 
 const deleteTodoApi = (id: number) => {
-    const url = `${import.meta.env.VITE_BACKEND_URL}/todos/${id}`;
-    return axios.delete(url)
+    return instance.delete(`/todos/${id}`)
 }
 
 export {

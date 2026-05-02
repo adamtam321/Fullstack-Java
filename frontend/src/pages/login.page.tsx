@@ -12,7 +12,8 @@ const LoginPage = () => {
             const res = await loginApi(values.email, values.password);
             if (res.data && res.data.data) {
                 message.success("ログインに成功しました！");
-                login(res.data.data); // Save to context & localStorage
+                const { token, user } = res.data.data;
+                login(user, token); // Save to context & localStorage
                 navigate("/");
             }
         } catch (error: any) {
