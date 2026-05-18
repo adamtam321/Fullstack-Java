@@ -1,8 +1,8 @@
 package vn.tamproject.todo.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import vn.tamproject.todo.repository.UserRepository;
@@ -17,7 +17,7 @@ public class HealthCheckController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/health-check")
+    @RequestMapping(value = "/health-check", method = {RequestMethod.GET, RequestMethod.HEAD})
     public ResponseEntity<String> healthCheck() {
         // Perform a lightweight database operation to keep the connection/database active
         userRepository.count();
