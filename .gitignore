@@ -1,7 +1,8 @@
 # Operating System Files
 .DS_Store
 Thumbs.db
-fortam.md
+fortam*
+**/fortam*
 
 # IDE and Editor Files
 .vscode/
